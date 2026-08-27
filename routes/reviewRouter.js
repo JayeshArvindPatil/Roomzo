@@ -6,7 +6,7 @@ const Listing = require("../models/listing.js");
 const reviewController = require("../controllers/reviews.js");
 
 const express = require("express");
-const { isLoggedIn, isReviewAuthor } = require("../middleware.js");
+const { isLoggedIn, isReviewAuthor } = require("../middlewares.js");
 const router = express.Router({ mergeParams: true });
 
 const validateReview = (req, res, next) => {
