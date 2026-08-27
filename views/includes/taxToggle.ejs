@@ -1,0 +1,88 @@
+<style>
+  #filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #ddd;
+    padding: 0.5rem 0;
+  }
+
+  .filter {
+    text-align: center;
+    margin-top: 1rem;
+    margin-right: 2rem;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+  }
+
+  .filter:hover {
+    opacity: 1;
+    cursor: pointer;
+  }
+
+  .filter p {
+    font-size: 0.8rem;
+    margin: 0.25rem 0 0;
+  }
+
+  .tax-toggle {
+    border: 1px solid black;
+    border-radius: 1rem;
+    height: 3.25rem;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .tax-info {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    #filters {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .tax-toggle {
+      align-self: flex-start;
+      width: 100%;
+      justify-content: flex-start;
+    }
+  }
+</style>
+
+<body>
+  <div id="filters" class="container mt-3">
+    <div class="filter">
+      <div><i class="fa-solid fa-bed"></i></div>
+      <p>Rooms</p>
+    </div>
+
+    <div class="tax-toggle">
+      <div class="form-check-reverse form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="flexswitchCheckDefault">
+        <label class="form-check-label" for="flexswitchCheckDefault">Display total after Taxes</label>
+      </div>
+    </div>
+  </div>
+</body>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const taxSwitch = document.getElementById("flexswitchCheckDefault");
+    if (!taxSwitch) return;
+
+    taxSwitch.addEventListener("click", () => {
+      const taxInfo = document.getElementsByClassName("tax-info");
+      for (let info of taxInfo) {
+        info.style.display = info.style.display !== "inline" ? "inline" : "none";
+      }
+    });
+  });
+</script>

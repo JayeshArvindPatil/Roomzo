@@ -1,0 +1,39 @@
+<% layout("layouts/boilerplate") %>
+
+  <div class="container mt-4">
+    <%- include('../includes/taxToggle') %>
+
+      <h2 class="mb-4">Search Results for "<%= location %>"</h2>
+
+      <% if (listings.length===0) { %>
+        <p class="text-muted fs-5">No listings found for "<%= location %>".</p>
+        <% } else { %>
+          <div class="row gy-4">
+            <% listings.forEach(listing=> { %>
+              <div class="col-md-4 col-sm-6">
+                <a href="/listings/<%= listing._id %>" class="listing-link text-decoration-none text-dark">
+                  <div class="card listing-card shadow-sm h-100">
+                    <img src="<%= listing.image.url %>" class="card-img-top" alt="listing_image"
+                      style="height: 20rem; object-fit: cover;">
+                    <div class="card-img-overlay"></div>
+                    <div class="card-body">
+                      <p class="card-text mb-1">
+                        <b>
+                          <%= listing.title %>
+                        </b>
+                        <br>
+                        &#8377; <%= listing.price ? listing.price.toLocaleString("en-IN") : "N/A" %> /Month
+                          <i class="tax-info text-muted"> &nbsp; +18% GST</i>
+                      </p>
+                      <p class="mb-0">
+                        <i class="fa-solid fa-location-dot text-danger"></i>
+                        <%= listing.location %>, <%= listing.country %>
+                      </p>
+                    </div>
+                  </div>
+                </a>
+              </div>
+              <% }) %>
+          </div>
+          <% } %>
+  </div>

@@ -9,26 +9,26 @@ const listingSchema = new Schema({
   },
   description: String,
   image: {
-    url : String,
-    filename : String,
+    url: String,
+    filename: String,
   },
   price: Number,
   location: String,
   country: String,
-  reviews : [
+  reviews: [
     {
-      type : Schema.Types.ObjectId,
-      ref : "Review",
+      type: Schema.Types.ObjectId,
+      ref: "Review",
     }
   ],
-  owner : {
-    type : Schema.Types.ObjectId,
-    ref : "User",
+  owner: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
   },
-  geometry : {
+  geometry: {
     type: {
-      type: String, // Don't do `{ location: { type: String } }`
-      enum: ['Point'], // 'location.type' must be 'Point'
+      type: String,
+      enum: ['Point'],
       required: true
     },
     coordinates: {
@@ -39,8 +39,8 @@ const listingSchema = new Schema({
 });
 
 listingSchema.post("findOneAndDelete", async (listing) => {
-  if(listing){
-    await Review.deleteMany({_id : {$in : listing.reviews}});
+  if (listing) {
+    await Review.deleteMany({ _id: { $in: listing.reviews } });
   }
 });
 
