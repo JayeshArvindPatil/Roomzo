@@ -62,7 +62,6 @@ const store = typeof MongoStore.create === "function"
         touchAfter: 24 * 3600,
       });
 
-// Fixed: Added `err` parameter to avoid ReferenceError
 store.on("error", (err) => {
     console.log("ERROR in MONGO SESSION store", err);
 });
@@ -94,6 +93,11 @@ app.use((req, res, next) => {
     res.locals.error = req.flash("error");
     res.locals.currUser = req.user;
     next();
+});
+
+// Root Route - Automatically redirects deployed URL (/) to /listings
+app.get("/", (req, res) => {
+    res.redirect("/listings");
 });
 
 app.use("/listings", listingRouter);
