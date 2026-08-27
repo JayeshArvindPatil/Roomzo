@@ -14,7 +14,11 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
 const session = require("express-session");
-const MongoStore = require("connect-mongo");
+
+// Handles export differences across connect-mongo versions
+const connectMongo = require("connect-mongo");
+const MongoStore = connectMongo.default || connectMongo;
+
 const flash = require("express-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
@@ -25,7 +29,6 @@ const reviewRouter = require("./routes/reviewRouter.js");
 const userRouter = require("./routes/userRouter.js");
 
 const dbUrl = process.env.ATLASDB_URL;
-//const dbUrl = "mongodb://127.0.0.1:27017/wanderlust";
 
 main().then(() => {
     console.log("Connected to the DB");
@@ -44,15 +47,23 @@ app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
 
-const store = MongoStore.create({
-    mongoUrl: dbUrl,
-    crypto: {
+// Hybrid fallback for both v4/v5 (MongoStore.create) and v3 (new MongoStore)
+const store = typeof MongoStore.create === "function"
+    ? MongoStore.create({
+        mongoUrl: dbUrl,
+        crypto: {
+            secret: process.env.SECRET,
+        },
+        touchAfter: 24 * 3600,
+      })
+    : new MongoStore({
+        url: dbUrl,
         secret: process.env.SECRET,
-    },
-    touchAfter: 24 * 3600,
-});
+        touchAfter: 24 * 3600,
+      });
 
-store.on("error", () => {
+// Fixed: Added `err` parameter to avoid ReferenceError
+store.on("error", (err) => {
     console.log("ERROR in MONGO SESSION store", err);
 });
 
@@ -87,7 +98,7 @@ app.use((req, res, next) => {
 
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
-app.use("/", userRouter)
+app.use("/", userRouter);
 
 app.get('/test', (req, res) => {
     res.send('Search route working!');
@@ -101,10 +112,6 @@ app.use((err, req, res, next) => {
     let { statusCode = 500, message = "Something went Wrong!" } = err;
     res.status(statusCode).render("error.ejs", { message });
 });
-
-// app.listen(8080, () => {
-//     console.log("Server is Working");
-// });
 
 const PORT = process.env.PORT || 8080;
 
